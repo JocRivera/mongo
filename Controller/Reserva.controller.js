@@ -6,7 +6,7 @@ export class ReservaController {
     async getReserva(req, res) {
         try {
             const reserva = await Reserva.find()
-                .populate('idAlojamiento')
+                .populate('idAccommodation')
             res.json(reserva);
         } catch (error) {
             res.status(500).send(error);

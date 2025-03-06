@@ -1,34 +1,34 @@
 import { Schema, model } from "mongoose";
 const ReservaSchema = new Schema({
-    idReserva: {
+    id: {
         type: Number,
         required: true,
         unique: true,
     },
-    idCliente: {
+    idClient: {
         type: Number,
         required: true,
     },
-    idPlan: {
+    idPlain: {
         type: Number,
         required: true,
     },
-    idAlojamiento: {
+    idAccommodation: {
         type: Schema.Types.ObjectId, ref: 'Alojamiento', required: false
     },
-    fechaInicio: {
+    initDate: {
         type: Date,
         required: true,
     },
-    fechaFin: {
+    endDate: {
         type: Date,
         required: true,
     },
-    idAcompañante: {
+    idCompanion: {
         type: Number,
         required: false,
     },
-    estado: {
+    status: {
         type: String,
         required: true,
         default: 'pendiente',
