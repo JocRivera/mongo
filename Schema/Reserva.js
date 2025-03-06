@@ -9,13 +9,12 @@ const ReservaSchema = new Schema({
         type: Number,
         required: true,
     },
-    plan: {
+    idPlan: {
         type: Number,
         required: true,
     },
-    alojamiento: {
-        type: String,
-        required: false,
+    idAlojamiento: {
+        type: Schema.Types.ObjectId, ref: 'Alojamiento', required: false
     },
     fechaInicio: {
         type: Date,
@@ -24,6 +23,10 @@ const ReservaSchema = new Schema({
     fechaFin: {
         type: Date,
         required: true,
+    },
+    idAcompañante: {
+        type: Number,
+        required: false,
     },
     estado: {
         type: String,

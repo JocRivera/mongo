@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import dbConnection from '../Config/Database.js';
 import { alojamientoRoutes } from '../routes/Alojamiento.routes.js';
+import { reservaRoutes } from '../routes/Reserva.routes.js';
 
 class Server {
     constructor() {
@@ -20,6 +21,7 @@ class Server {
 
     routes() {
         this.app.use(alojamientoRoutes);
+        this.app.use(reservaRoutes);
     }
 
     start() {
