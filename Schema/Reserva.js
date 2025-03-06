@@ -16,7 +16,7 @@ const ReservaSchema = new Schema({
     idAccommodation: {
         type: Schema.Types.ObjectId, ref: 'Alojamiento', required: false
     },
-    initDate: {
+    startDate: {
         type: Date,
         required: true,
     },
