@@ -1,10 +1,6 @@
 import { Schema, model } from 'mongoose';
 const AcompanantesSchema = new Schema({
-    id: {
-        type: Number,
-        required: true,
-        unique: true,
-    },
+
     nombre: {
         type: String,
         required: true,

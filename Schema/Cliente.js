@@ -1,10 +1,5 @@
 import { Schema, model } from 'mongoose';
 const ClientesSchema = new Schema({
-    id: {
-        type: Number,
-        required: true,
-        unique: true,
-    },
     nombre: {
         type: String,
         required: true,

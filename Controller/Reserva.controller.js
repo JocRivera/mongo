@@ -26,7 +26,7 @@ export class ReservaController {
                 : [reservaData.companion];
 
             // Procesar cliente
-            let clientDoc = await Cliente.findOne({ id: clientData.id });
+            let clientDoc = await Cliente.findOne({ _id: clientData._id });
             if (!clientDoc) {
                 clientDoc = new Cliente(clientData);
                 await clientDoc.save();
@@ -35,8 +35,8 @@ export class ReservaController {
             // Procesar acompañantes
             const companionIds = [];
             for (const acomp of companionData) {
-                if (acomp && acomp.id) {
-                    let acompDoc = await Acompanante.findOne({ id: acomp.id });
+                if (acomp && acomp.documento) {
+                    let acompDoc = await Acompanante.findOne({ documento: acomp.documento });
                     if (!acompDoc) {
                         acompDoc = new Acompanante(acomp);
                         await acompDoc.save();
@@ -47,7 +47,7 @@ export class ReservaController {
 
             // Crear nueva reserva
             const newReserva = new Reserva({
-                id: reservaData.id,
+                id: reservaData._id,
                 client: clientDoc._id,
                 idPlan: reservaData.idPlan,
                 idAccommodation: reservaData.idAccommodation,
