@@ -1,5 +1,6 @@
 import Reserva from '../Schema/Reserva.js';
-
+import Cliente from "../Schema/Cliente.js";
+import Acompanante from "../Schema/Acompañantes.js";
 export class ReservaController {
     constructor() {
     }
@@ -14,10 +15,53 @@ export class ReservaController {
     }
     async postReserva(req, res) {
         try {
-            const reserva = new Reserva(req.body);
-            await reserva.save();
-            res.json(reserva);
+            const reservaData = req.body;
+
+            // Extraer datos del cliente
+            const clientData = reservaData.client;
+
+            // Extraer datos del acompañante (convertir a array si es un solo objeto)
+            const companionData = Array.isArray(reservaData.companion)
+                ? reservaData.companion
+                : [reservaData.companion];
+
+            // Procesar cliente
+            let clientDoc = await Cliente.findOne({ id: clientData.id });
+            if (!clientDoc) {
+                clientDoc = new Cliente(clientData);
+                await clientDoc.save();
+            }
+
+            // Procesar acompañantes
+            const companionIds = [];
+            for (const acomp of companionData) {
+                if (acomp && acomp.id) {
+                    let acompDoc = await Acompanante.findOne({ id: acomp.id });
+                    if (!acompDoc) {
+                        acompDoc = new Acompanante(acomp);
+                        await acompDoc.save();
+                    }
+                    companionIds.push(acompDoc._id);
+                }
+            }
+
+            // Crear nueva reserva
+            const newReserva = new Reserva({
+                id: reservaData.id,
+                client: clientDoc._id,
+                idPlan: reservaData.idPlan,
+                idAccommodation: reservaData.idAccommodation,
+                startDate: reservaData.startDate,
+                endDate: reservaData.endDate,
+                companion: companionIds,
+                status: reservaData.status || 'pendiente'
+            });
+
+            await newReserva.save();
+
+            res.json(newReserva);
         } catch (error) {
+            console.error("Error al crear reserva:", error);
             res.status(500).send(error);
         }
     }

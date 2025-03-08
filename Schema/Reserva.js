@@ -1,17 +1,18 @@
 import { Schema, model } from "mongoose";
+
 const ReservaSchema = new Schema({
     id: {
         type: Number,
         required: true,
         unique: true,
     },
-    idClient: {
-        type: Number,
+    client: {
+        type: Schema.Types.ObjectId,
+        ref: 'Cliente',
         required: true,
     },
-    idPlain: {
-        type: Number,
-        required: true,
+    idPlan: {
+        type: Schema.Types.ObjectId, ref: 'Plan', required: true
     },
     idAccommodation: {
         type: Schema.Types.ObjectId, ref: 'Alojamiento', required: false
@@ -24,10 +25,11 @@ const ReservaSchema = new Schema({
         type: Date,
         required: true,
     },
-    idCompanion: {
-        type: Number,
+    companion: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Acompanante',
         required: false,
-    },
+    }],
     status: {
         type: String,
         required: true,
