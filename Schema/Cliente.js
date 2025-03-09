@@ -11,7 +11,7 @@ const ClientesSchema = new Schema({
     tipoDocumento: {
         type: String,
         required: true,
-        enum: ['cedula', 'pasaporte', 'otro']
+        enum: ['cc', 'ce', 'pp']
     },
     email: {
         type: String,

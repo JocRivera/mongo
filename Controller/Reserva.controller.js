@@ -8,6 +8,10 @@ export class ReservaController {
         try {
             const reserva = await Reserva.find()
                 .populate('idAccommodation')
+                .populate('idPlan')
+                .populate('client')
+                .populate('companion');
+
             res.json(reserva);
         } catch (error) {
             res.status(500).send(error);

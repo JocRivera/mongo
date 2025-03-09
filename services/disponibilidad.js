@@ -13,18 +13,21 @@ const getDisponibilidad = async (req, res) => {
         const reservedAccommodations = await Reserva.find({
             $or: [
                 {
-                    startDate: { $lt: parsedStartDate },
-                    endDate: { $gt: parsedEndDate },
-                }
-            ]
+                    startDate: { $lte: parsedEndDate },
+                    endDate: { $gte: parsedStartDate },
+                },
+            ],
         }).distinct('idAccommodation');
 
-        const availableAccommodations = await Alojamiento.find({
-            _id: { $nin: reservedAccommodations },
-            capacidad: { $gte: guests },
+        let query = {
+            _id: { $nin: reservedAccommodations }
+        }
 
+        if (guests) {
+            query.capacidad = { $gte: guests };
+        }
 
-        });
+        const availableAccommodations = await Alojamiento.find(query);
         res.status(200).json(availableAccommodations);
 
     } catch (error) {
@@ -33,4 +36,4 @@ const getDisponibilidad = async (req, res) => {
     }
 }
 
-export default getDisponibilidad 
+export default getDisponibilidad;
