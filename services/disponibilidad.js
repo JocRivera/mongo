@@ -3,25 +3,35 @@ import Alojamiento from "../Schema/Alojamiento.js";
 
 const getDisponibilidad = async (req, res) => {
     try {
-        const { startDate, endDate, guests } = req.query;
+        const { startDate, endDate, guests, id } = req.query;
         if (!startDate || !endDate) {
             return res.status(400).json({ message: "Faltan datos" });
         }
         const parsedStartDate = new Date(startDate);
         const parsedEndDate = new Date(endDate);
 
-        const reservedAccommodations = await Reserva.find({
+        // Consulta para encontrar reservas que se superpongan con el rango de fechas solicitado
+        const reservedAccommodationsQuery = {
             $or: [
                 {
-                    startDate: { $lte: parsedEndDate },
-                    endDate: { $gte: parsedStartDate },
+                    startDate: { $lt: parsedEndDate }, // La fecha de inicio debe ser menor que la fecha de fin de la nueva reserva
+                    endDate: { $gt: parsedStartDate }, // La fecha de fin debe ser mayor que la fecha de inicio de la nueva reserva
                 },
             ],
-        }).distinct('idAccommodation');
+        };
 
+        // Si hay un ID de reserva, excluimos esa reserva de la consulta
+        if (id) {
+            reservedAccommodationsQuery._id = { $ne: id };
+        }
+
+        // Obtener los IDs de los alojamientos reservados
+        const reservedAccommodations = await Reserva.find(reservedAccommodationsQuery).distinct('idAccommodation');
+
+        // Consulta para encontrar alojamientos disponibles
         let query = {
             _id: { $nin: reservedAccommodations }
-        }
+        };
 
         if (guests) {
             query.capacidad = { $gte: guests };
