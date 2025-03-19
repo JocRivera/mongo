@@ -12,7 +12,7 @@ const AcompanantesSchema = new Schema({
     tipoDocumento: {
         type: String,
         required: true,
-        enum: ['cedula', 'pasaporte', 'otro']
+        enum: ['cc', 'pp', 'otro']
     },
     email: {
         type: String,

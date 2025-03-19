@@ -3,7 +3,7 @@ import Alojamiento from "../Schema/Alojamiento.js";
 
 const getDisponibilidad = async (req, res) => {
     try {
-        const { startDate, endDate, guests, id } = req.query;
+        const { startDate, endDate, guests, id, plan } = req.query;
         if (!startDate || !endDate) {
             return res.status(400).json({ message: "Faltan datos" });
         }
@@ -20,7 +20,6 @@ const getDisponibilidad = async (req, res) => {
             ],
         };
 
-        // Si hay un ID de reserva, excluimos esa reserva de la consulta
         if (id) {
             reservedAccommodationsQuery._id = { $ne: id };
         }
@@ -35,6 +34,9 @@ const getDisponibilidad = async (req, res) => {
 
         if (guests) {
             query.capacidad = { $gte: guests };
+        }
+        if (plan === "67cb9ce3ed658211aca1955f") {
+            query.tipo = "habitacion";
         }
 
         const availableAccommodations = await Alojamiento.find(query);
