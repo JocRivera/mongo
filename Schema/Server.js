@@ -9,6 +9,7 @@ import { servicioRoutes } from '../Routes/Servicio.routes.js';
 import { acompananteRoutes } from '../Routes/Acompañante.routes.js';
 import { clienteRoutes } from '../Routes/Cliente.routes.js';
 import { planRoutes } from '../Routes/Plan.routes.js';
+import { authRoutes } from '../Routes/Auth.routes.js';
 
 
 class Server {
@@ -33,6 +34,7 @@ class Server {
         this.app.use(acompananteRoutes);
         this.app.use(clienteRoutes);
         this.app.use(planRoutes);
+        this.app.use(authRoutes);
     }
 
     start() {
