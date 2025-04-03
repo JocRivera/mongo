@@ -11,8 +11,7 @@ import { acompananteRoutes } from '../Routes/Acompañante.routes.js';
 import { clienteRoutes } from '../Routes/Cliente.routes.js';
 import { planRoutes } from '../Routes/Plan.routes.js';
 import { authRoutes } from '../Routes/Auth.routes.js';
-import { rolRoutes } from '../Routes/Rol.routes.js';
-import { verifyToken } from '../Middleware/Auth.js';
+import { verifyToken, verifyRol } from '../Middleware/Auth.js';
 class Server {
     constructor() {
         this.app = express();
@@ -26,26 +25,25 @@ class Server {
         this.app.use(cookieParser());
         this.app.use(cors());
         dbConnection();
-        this.app.use((req, res, next) => {
-            const publicRoutes = ['/', '/login', '/register', '/forgot-password', '/reset-password'];
-            if (publicRoutes.includes(req.path)) {
-                return next();
-            }
-            verifyToken(req, res, next);
-        }
-        )
     }
 
     routes() {
-        this.app.use(alojamientoRoutes);
-        this.app.use(reservaRoutes);
+        this.app.use(authRoutes);
+        // this.app.use((req, res, next) => {
+        //     const publicRoutes = ['/register', '/login'];
+        //     if (publicRoutes.includes(req.path)) {
+        //         return next();
+        //     }
+        //     verifyToken(req, res, next);
+        // })
+        this.app.use(verifyToken);
+        this.app.use(verifyRol(['admin']), alojamientoRoutes);
+        this.app.use(verifyRol(['admin', 'user']), reservaRoutes);
         this.app.use(disponibilidadRoutes);
-        this.app.use(servicioRoutes);
+        this.app.use(verifyRol(['admin']), servicioRoutes);
         this.app.use(acompananteRoutes);
         this.app.use(clienteRoutes);
         this.app.use(planRoutes);
-        this.app.use(authRoutes);
-        this.app.use(rolRoutes);
     }
 
     start() {

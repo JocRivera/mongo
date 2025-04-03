@@ -6,7 +6,6 @@ export class ServicioController {
     async getServicio(req, res) {
         try {
             const servicio = await Servicio.find()
-                .populate('idAccommodation')
             res.json(servicio);
         } catch (error) {
             res.status(500).send(error);

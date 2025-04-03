@@ -14,9 +14,10 @@ export class AuthController {
                 apellido: req.body.apellido,
                 email,
                 password: crypt,
+                rol: req.body.rol || 'user',
             });
             const UserSave = await user.save();
-            jwt.sign({ id: UserSave._id }, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
+            jwt.sign({ id: UserSave._id, rol: UserSave.rol }, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
                 if (err) {
                     return res.status(500).send(err);
                 }
@@ -38,7 +39,7 @@ export class AuthController {
             if (!isMatch) {
                 return res.status(400).json({ message: 'Invalid credentials' });
             }
-            const token = jwt.sign({ id: userFound._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+            const token = jwt.sign({ id: userFound._id, rol: userFound.rol }, process.env.JWT_SECRET, { expiresIn: '1h' });
             res.cookie('access_token', token, { httpOnly: true, secure: true });
             res.json({ token });
         } catch (error) {
