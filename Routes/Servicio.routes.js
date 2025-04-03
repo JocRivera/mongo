@@ -1,5 +1,6 @@
 import router from 'express';
 import { ServicioController } from '../Controller/Servicio.controller.js';
+
 const servicioRoutes = router();
 const servicioController = new ServicioController();
 servicioRoutes.get('/servicio', servicioController.getServicio);
