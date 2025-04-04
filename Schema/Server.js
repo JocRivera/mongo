@@ -21,9 +21,10 @@ class Server {
 
     config() {
         dotenv.config();
+        this.app.use(cors());
         this.app.use(express.json());
         this.app.use(cookieParser());
-        this.app.use(cors());
+
         dbConnection();
     }
 

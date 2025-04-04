@@ -4,5 +4,5 @@ const authRoutes = Router()
 const authController = new AuthController()
 authRoutes.post('/login', authController.Login)
 authRoutes.post('/register', authController.Register)
-
+authRoutes.get('/verify', authController.verifyToken)
 export { authRoutes }
