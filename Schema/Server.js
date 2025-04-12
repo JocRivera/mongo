@@ -21,7 +21,10 @@ class Server {
 
     config() {
         dotenv.config();
-        this.app.use(cors());
+        this.app.use(cors({
+            origin: 'http://localhost:5173', // solo tu frontend
+            credentials: true               // permite enviar cookies
+        }));;
         this.app.use(express.json());
         this.app.use(cookieParser());
 

@@ -41,7 +41,16 @@ export class AuthController {
             }
             const token = jwt.sign({ id: userFound._id, rol: userFound.rol }, process.env.JWT_SECRET, { expiresIn: '1h' });
             res.cookie('access_token', token, { httpOnly: true, secure: true });
-            res.json({ token });
+            res.json({
+                token,
+                user: {
+                    id: userFound._id,
+                    nombre: userFound.nombre,
+                    apellido: userFound.apellido,
+                    email: userFound.email,
+                    rol: userFound.rol
+                }
+            });
         } catch (error) {
 
         }
@@ -51,7 +60,7 @@ export class AuthController {
         if (!token) {
             return res.status(401).json({ message: 'No token provided' });
         }
-        jwt.verify(token, process.env.JWT_SECRET, async (error, user)=>{
+        jwt.verify(token, process.env.JWT_SECRET, async (error, user) => {
             if (error) {
                 return res.status(403).json({ message: 'Invalid token' });
             }
@@ -62,6 +71,10 @@ export class AuthController {
             res.json({ user: userFound });
         })
     }
-    
+    async Logout(req, res) {
+        res.clearCookie('access_token');
+        res.json({ message: 'Logout successful' });
+    }
+
 }
 export const authController = new AuthController();
