@@ -26,7 +26,16 @@ export class AuthController {
                 if (err) {
                     return res.status(500).send(err);
                 }
-                res.json({ token });
+                res.json({
+                    token,
+                    user: {
+                        id: UserSave._id,
+                        nombre: UserSave.nombre,
+                        apellido: UserSave.apellido,
+                        email: UserSave.email,
+                        rol: UserSave.rol
+                    }
+                });
             });
 
         } catch (error) {
