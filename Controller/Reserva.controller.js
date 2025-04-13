@@ -1,14 +1,15 @@
 import Reserva from '../Schema/Reserva.js';
 import Cliente from "../Schema/Cliente.js";
 import Acompanante from "../Schema/Acompañantes.js";
+import User from "../Schema/User.js";
 export class ReservaController {
     constructor() {
     }
     async getReserva(req, res) {
         try {
             // Obtener el rol del usuario desde el token (asumiendo que está en req.user)
-            const userRole = req.user.role;
-            const userId = req.user._id;
+            const userRole = req.user.rol;
+            const userId = req.user.id;
 
             let query = {};
 
@@ -30,7 +31,34 @@ export class ReservaController {
     }
     async postReserva(req, res) {
         try {
+            console.log('Datos del usuario desde el token:', req.user);
+
             const reservaData = req.body;
+            const userId = req.user.id; // Obtener el ID del usuario desde el token
+            reservaData.user = userId; // Asignar el ID del usuario a la reserva
+            // Buscar el usuario completo en la base de datos para asegurar datos completos
+            const userCompleto = await User.findById(userId);
+            if (!userCompleto) {
+                return res.status(404).json({ message: 'Usuario no encontrado' });
+            }
+
+            if (req.user.rol !== 'admin') {
+                reservaData.client = {
+                    _id: userId,
+                    nombre: userCompleto.nombre,
+                    apellido: userCompleto.apellido,
+                    documento: userCompleto.documento,
+                    tipoDocumento: userCompleto.tipoDocumento,
+                    email: userCompleto.email,
+                    telefono: userCompleto.telefono,
+                    eps: userCompleto.eps,
+                    status: 'activo' // Agregar status por defecto
+                };
+            } else if (!reservaData.client || !reservaData.client.status) {
+                // Si es admin pero no envió todos los datos del cliente
+                if (!reservaData.client) reservaData.client = {};
+                reservaData.client.status = 'activo';
+            }
 
             // Extraer datos del cliente
             const clientData = reservaData.client;
@@ -62,6 +90,7 @@ export class ReservaController {
 
             // Crear nueva reserva
             const newReserva = new Reserva({
+                user: userId,
                 id: reservaData._id,
                 client: clientDoc._id,
                 idPlan: reservaData.idPlan,
