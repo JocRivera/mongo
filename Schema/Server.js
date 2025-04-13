@@ -41,13 +41,13 @@ class Server {
         //     verifyToken(req, res, next);
         // })
         this.app.use(verifyToken);
-        this.app.use(verifyRol(['admin']), alojamientoRoutes);
+        this.app.use(verifyRol(['admin', 'user']), planRoutes);
         this.app.use(verifyRol(['admin', 'user']), reservaRoutes);
+        this.app.use(verifyRol(['admin']), alojamientoRoutes);
         this.app.use(verifyRol(['admin']), disponibilidadRoutes);
         this.app.use(verifyRol(['admin']), servicioRoutes);
         this.app.use(verifyRol(['admin']), acompananteRoutes);
         this.app.use(verifyRol(['admin']), clienteRoutes);
-        this.app.use(verifyRol(['admin']), planRoutes);
     }
 
     start() {

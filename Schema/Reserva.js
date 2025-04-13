@@ -1,6 +1,11 @@
 import { Schema, model } from "mongoose";
 
 const ReservaSchema = new Schema({
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
     client: {
         type: Schema.Types.ObjectId,
         ref: 'Cliente',
