@@ -6,7 +6,18 @@ export class ReservaController {
     }
     async getReserva(req, res) {
         try {
-            const reserva = await Reserva.find()
+            // Obtener el rol del usuario desde el token (asumiendo que está en req.user)
+            const userRole = req.user.role;
+            const userId = req.user._id;
+
+            let query = {};
+
+            // Si no es admin, filtrar solo las reservas del usuario
+            if (userRole !== 'admin') {
+                query.client = userId;
+            }
+
+            const reserva = await Reserva.find(query)
                 .populate('idAccommodation')
                 .populate('idPlan')
                 .populate('client')

@@ -16,8 +16,6 @@ export const verifyToken = (req, res, next) => {
 export const verifyRol = (rol) => {
     return (req, res, next) => {
         const userRole = req.user?.rol;
-        console.log('User role:', userRole); // Debugging line
-        console.log('Required roles:', rol); // Debugging line
         if (!rol.includes(userRole)) {
             return res.status(403).json({ message: 'Access denied. Insufficient permissions.' });
         }
