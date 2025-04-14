@@ -20,6 +20,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.8.2",
     "nodemon": "^3.1.9",
-    "pruebaapi_mongo": "file:"
+    "pruebaapi_mongo": "file:",
+    "socket.io": "^4.8.1"
   }
 }

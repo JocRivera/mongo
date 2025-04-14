@@ -2,6 +2,7 @@ import Reserva from '../Schema/Reserva.js';
 import Cliente from "../Schema/Cliente.js";
 import Acompanante from "../Schema/Acompañantes.js";
 import User from "../Schema/User.js";
+import { getIO } from '../Config/Socket.js';
 export class ReservaController {
     constructor() {
     }
@@ -34,9 +35,10 @@ export class ReservaController {
             console.log('Datos del usuario desde el token:', req.user);
 
             const reservaData = req.body;
-            const userId = req.user.id; // Obtener el ID del usuario desde el token
-            reservaData.user = userId; // Asignar el ID del usuario a la reserva
-            // Buscar el usuario completo en la base de datos para asegurar datos completos
+            const userId = req.user.id;
+
+            reservaData.user = userId;
+
             const userCompleto = await User.findById(userId);
             if (!userCompleto) {
                 return res.status(404).json({ message: 'Usuario no encontrado' });
@@ -49,66 +51,27 @@ export class ReservaController {
                     apellido: userCompleto.apellido,
                     documento: userCompleto.documento,
                     tipoDocumento: userCompleto.tipoDocumento,
-                    email: userCompleto.email,
-                    telefono: userCompleto.telefono,
-                    eps: userCompleto.eps,
-                    status: 'activo' // Agregar status por defecto
+                    email: userCompleto.email
                 };
-            } else if (!reservaData.client || !reservaData.client.status) {
-                // Si es admin pero no envió todos los datos del cliente
-                if (!reservaData.client) reservaData.client = {};
-                reservaData.client.status = 'activo';
             }
 
-            // Extraer datos del cliente
-            const clientData = reservaData.client;
+            const nuevaReserva = new Reserva(reservaData);
+            await nuevaReserva.save();
 
-            // Extraer datos del acompañante (convertir a array si es un solo objeto)
-            const companionData = Array.isArray(reservaData.companion)
-                ? reservaData.companion
-                : [reservaData.companion];
-
-            // Procesar cliente
-            let clientDoc = await Cliente.findOne({ _id: clientData._id });
-            if (!clientDoc) {
-                clientDoc = new Cliente(clientData);
-                await clientDoc.save();
-            }
-
-            // Procesar acompañantes
-            const companionIds = [];
-            for (const acomp of companionData) {
-                if (acomp && acomp.documento) {
-                    let acompDoc = await Acompanante.findOne({ documento: acomp.documento });
-                    if (!acompDoc) {
-                        acompDoc = new Acompanante(acomp);
-                        await acompDoc.save();
-                    }
-                    companionIds.push(acompDoc._id);
-                }
-            }
-
-            // Crear nueva reserva
-            const newReserva = new Reserva({
-                user: userId,
-                id: reservaData._id,
-                client: clientDoc._id,
-                idPlan: reservaData.idPlan,
-                idAccommodation: reservaData.idAccommodation,
-                startDate: reservaData.startDate,
-                endDate: reservaData.endDate,
-                companion: companionIds,
-                status: reservaData.status || 'pendiente'
+            // ⚡ Emitir notificación a admins
+            const io = getIO();
+            io.to('admin_room').emit('notification', {
+                message: 'Nueva reserva registrada',
+                reservaId: nuevaReserva._id
             });
 
-            await newReserva.save();
-
-            res.json(newReserva);
+            res.status(201).json(nuevaReserva);
         } catch (error) {
-            console.error("Error al crear reserva:", error);
-            res.status(500).send(error);
+            console.error('Error al guardar la reserva:', error);
+            res.status(500).send({ message: 'Error al crear la reserva', error });
         }
     }
+
     async putReserva(req, res) {
         try {
             const { id } = req.params;
