@@ -36,7 +36,6 @@ export class ReservaController {
 
             const reservaData = req.body;
             const userId = req.user.id;
-
             reservaData.user = userId;
 
             const userCompleto = await User.findById(userId);
@@ -44,8 +43,10 @@ export class ReservaController {
                 return res.status(404).json({ message: 'Usuario no encontrado' });
             }
 
-            if (req.user.rol === 'admin') {
-                reservaData.client = {
+            let clientData;
+
+            if (req.user.rol !== 'admin') {
+                clientData = {
                     _id: userId,
                     nombre: userCompleto.nombre,
                     apellido: userCompleto.apellido,
@@ -53,12 +54,51 @@ export class ReservaController {
                     tipoDocumento: userCompleto.tipoDocumento,
                     email: userCompleto.email
                 };
+                reservaData.client = clientData;
+            } else {
+                clientData = reservaData.client; // El admin envía los datos del cliente
             }
 
-            const nuevaReserva = new Reserva(reservaData);
+            // Guardar cliente si no existe
+            let clientDoc = await Cliente.findOne({ _id: clientData._id });
+            if (!clientDoc) {
+                clientDoc = new Cliente(clientData);
+                await clientDoc.save();
+            }
+
+            // Procesar acompañantes
+            const companionData = Array.isArray(reservaData.companion)
+                ? reservaData.companion
+                : reservaData.companion ? [reservaData.companion] : [];
+
+            const companionIds = [];
+
+            for (const acomp of companionData) {
+                if (acomp && acomp.documento) {
+                    let acompDoc = await Acompanante.findOne({ documento: acomp.documento });
+                    if (!acompDoc) {
+                        acompDoc = new Acompanante(acomp);
+                        await acompDoc.save();
+                    }
+                    companionIds.push(acompDoc._id);
+                }
+            }
+
+            // Crear nueva reserva
+            const nuevaReserva = new Reserva({
+                idPlan: reservaData.idPlan,
+                idAccommodation: reservaData.idAccommodation,
+                startDate: reservaData.startDate,
+                endDate: reservaData.endDate,
+                companion: companionIds,
+                status: reservaData.status || 'pendiente',
+                client: clientDoc._id,
+                user: userId
+            });
+
             await nuevaReserva.save();
 
-            // ⚡ Emitir notificación a admins
+            // Notificar a admins
             const io = getIO();
             io.to('admin_room').emit('notification', {
                 message: 'Nueva reserva registrada',
@@ -66,11 +106,13 @@ export class ReservaController {
             });
 
             res.status(201).json(nuevaReserva);
+
         } catch (error) {
             console.error('Error al guardar la reserva:', error);
-            res.status(500).send({ message: 'Error al crear la reserva', error });
+            res.status(500).json({ message: 'Error al procesar la reserva', error });
         }
     }
+
 
     async putReserva(req, res) {
         try {
