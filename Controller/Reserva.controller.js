@@ -44,7 +44,7 @@ export class ReservaController {
                 return res.status(404).json({ message: 'Usuario no encontrado' });
             }
 
-            if (req.user.rol !== 'admin') {
+            if (req.user.rol === 'admin') {
                 reservaData.client = {
                     _id: userId,
                     nombre: userCompleto.nombre,
