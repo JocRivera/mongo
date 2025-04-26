@@ -41,6 +41,7 @@ class Server {
 
     routes() {
         this.app.use(authRoutes);
+        this.app.use(planRoutes);
         // this.app.use((req, res, next) => {
         //     const publicRoutes = ['/register', '/login'];
         //     if (publicRoutes.includes(req.path)) {
@@ -49,7 +50,6 @@ class Server {
         //     verifyToken(req, res, next);
         // })
         this.app.use(verifyToken);
-        this.app.use(verifyRol(['admin', 'user']), planRoutes);
         this.app.use(verifyRol(['admin', 'user']), reservaRoutes);
         this.app.use(verifyRol(['admin', 'user']), disponibilidadRoutes);
         this.app.use(verifyRol(['admin']), alojamientoRoutes);

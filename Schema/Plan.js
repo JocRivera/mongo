@@ -37,6 +37,10 @@ const PlaneSchema = new Schema({
         required: true,
         enum: ['active', 'inactive']
     },
+    imagen: {
+        type: String,  // URL o ruta a la imagen
+        required: false,
+    },
 });
 
 export default model('Plan', PlaneSchema);
