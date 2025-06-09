@@ -15,13 +15,27 @@ export class AuthController {
                 email,
                 password: crypt,
                 rol: req.body.rol || 'user',
+                documento: req.body.documento,
+                tipoDocumento: req.body.tipoDocumento,
+                telefono: req.body.telefono,
+                fechaNacimiento: req.body.fechaNacimiento,
+                eps: req.body.eps,
             });
             const UserSave = await user.save();
             jwt.sign({ id: UserSave._id, rol: UserSave.rol }, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
                 if (err) {
                     return res.status(500).send(err);
                 }
-                res.json({ token });
+                res.json({
+                    token,
+                    user: {
+                        id: UserSave._id,
+                        nombre: UserSave.nombre,
+                        apellido: UserSave.apellido,
+                        email: UserSave.email,
+                        rol: UserSave.rol
+                    }
+                });
             });
 
         } catch (error) {

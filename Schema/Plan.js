@@ -17,14 +17,6 @@ const PlaneSchema = new Schema({
         type: Number,
         required: false,
     },
-    startDate: {
-        type: Date,
-        required: false,
-    },
-    endDate: {
-        type: Date,
-        required: false,
-    },
     price: {
         type: Number,
         required: true,
@@ -37,6 +29,15 @@ const PlaneSchema = new Schema({
         required: true,
         enum: ['active', 'inactive']
     },
+    imagen: {
+        type: String,  // URL o ruta a la imagen
+        required: false,
+    },
 });
+PlaneSchema.index({ id: 1 }, { unique: true });
+PlaneSchema.statics.incrementId = async function () {
+    const lastPlan = await this.findOne().sort({ id: -1 });
+    return lastPlan ? lastPlan.id + 1 : 1;
+};
 
 export default model('Plan', PlaneSchema);

@@ -14,7 +14,17 @@ export class PlanController {
     }
     async postPlan(req, res) {
         try {
-            const plan = new Plan(req.body);
+            const lastData = await Plan.incrementId();
+            const plan = new Plan({
+                id: lastData,
+                name: req.body.name,
+                descripcion: req.body.descripcion,
+                capacidad: req.body.capacidad,
+                price: req.body.price,
+                idService: req.body.idService,
+                status: req.body.status,
+                imagen: req.body.imagen
+            });
             await plan.save();
             res.json(plan);
         } catch (error) {
