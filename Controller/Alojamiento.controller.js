@@ -32,5 +32,18 @@ const deleteAlojamiento = async (req, res) => {
         res.json(error);
     }
 }
+const getAlojamientoById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const alojamiento = await Alojamiento.findById(id);
+        if (!alojamiento) {
+            return res.status(404).json({ message: 'Alojamiento not found' });
+        }
+        res.json(alojamiento);
+    } catch (error) {
+        res.status(500).json({ message: 'Error retrieving alojamiento', error });
+    }
+}
 
-export { getAlojamiento, postAlojamiento, putAlojamiento, deleteAlojamiento };
+
+export { getAlojamientoById, getAlojamiento, postAlojamiento, putAlojamiento, deleteAlojamiento };

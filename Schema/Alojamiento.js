@@ -23,6 +23,10 @@ const AlojamientoSchema = new Schema({
         required: true,
         enum: ['disponible', 'ocupado', 'mantenimiento']
     },
+    images: {
+        type: [String],
+        required: true,
+    },
 });
 
 export default model('Alojamiento', AlojamientoSchema);
