@@ -25,9 +25,8 @@ const PlaneSchema = new Schema({
         type: [Schema.Types.ObjectId], ref: 'Servicio', required: false
     },
     status: {
-        type: String,
-        required: true,
-        enum: ['active', 'inactive']
+        type: Boolean,
+        default: true,
     },
     imagen: {
         type: String,  // URL o ruta a la imagen

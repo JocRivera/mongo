@@ -57,14 +57,13 @@ export class PlanController {
     async getStaticPlan(req, res) {
         try {
             const staticPlan = [
-                "67cb9c3bed658211aca19559", "67cb9c91ed658211aca1955d", "67cb9ce3ed658211aca1955f"
-            ]
-            const plans = await Plan.find({ _id: { $in: staticPlan } })
+                "Plan Romántico", "Día de sol", "Alojamiento"
+            ];
+            const plans = await Plan.find({ name: { $in: staticPlan } });
             res.json(plans);
         }
         catch (error) {
             res.status(500).send(error);
         }
-
     }
 }
