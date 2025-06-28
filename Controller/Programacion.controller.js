@@ -64,5 +64,35 @@ export class ProgramacionController {
             res.status(500).json({ message: "Error al obtener la programación", error });
         }
     }
+    async getByRange(req, res) {
+        try {
+            const { startDate, endDate } = req.query;
+
+            if (!startDate || !endDate) {
+                return res.status(400).json({ message: "Faltan parámetros startDate o endDate" });
+            }
+
+            const parsedStartDate = new Date(startDate);
+            const parsedEndDate = new Date(endDate);
+
+            if (isNaN(parsedStartDate) || isNaN(parsedEndDate)) {
+                return res.status(400).json({ message: "Fechas inválidas" });
+            }
+
+            const programaciones = await ProgramarPlan.find({
+                fechaInicio: { $lte: parsedStartDate },
+                fechaFin: { $gte: parsedEndDate }
+            }).populate('idPlan');
+
+            res.status(200).json(programaciones);
+        } catch (error) {
+            res.status(500).json({
+                message: "Error al obtener las programaciones por rango",
+                error: error.message || error
+            });
+        }
+    }
+
+
 
 }

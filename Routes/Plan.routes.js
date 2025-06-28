@@ -11,6 +11,7 @@ planRoutes.get('/plan/static', verifyToken, verifyRol(['admin', 'user']), planCo
 planRoutes.put('/plan/:id', verifyToken, verifyRol(['admin', 'user']), planController.putPlan);
 planRoutes.delete('/plan/:id', verifyToken, verifyRol(['admin', 'user']), planController.deletePlan);
 planRoutes.get('/programacion', verifyToken, verifyRol(['admin', 'user']), programacionController.getAll);
+planRoutes.get('/programacion/rango', verifyToken, verifyRol(['admin', 'user']), programacionController.getByRange);
 planRoutes.post('/programacion', verifyToken, verifyRol(['admin', 'user']), programacionController.create);
 planRoutes.put('/programacion/:id', verifyToken, verifyRol(['admin', 'user']), programacionController.update);
 planRoutes.delete('/programacion/:id', verifyToken, verifyRol(['admin', 'user']), programacionController.delete);
