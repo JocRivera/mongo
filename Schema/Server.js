@@ -43,6 +43,7 @@ class Server {
         this.app.use(authRoutes);
         this.app.use(planRoutes);
         this.app.use(servicioRoutes);
+        this.app.use(alojamientoRoutes);
 
         // this.app.use((req, res, next) => {
         //     const publicRoutes = ['/register', '/login'];

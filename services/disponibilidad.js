@@ -35,9 +35,9 @@ const getDisponibilidad = async (req, res) => {
         if (guests) {
             query.capacidad = { $gte: guests };
         }
-        if (plan === "67cb9ce3ed658211aca1955f") {
+        if (plan === "6860563247c17606f8059044") {
             query.tipo = "habitacion";
-        }
+        }//plan romantico solo habitaciones
 
         const availableAccommodations = await Alojamiento.find(query);
         res.status(200).json(availableAccommodations);

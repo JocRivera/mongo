@@ -54,5 +54,16 @@ export class PlanController {
             res.status(500).send(error);
         }
     }
-
+    async getStaticPlan(req, res) {
+        try {
+            const staticPlan = [
+                "Plan Romántico", "Día de sol", "Alojamiento"
+            ];
+            const plans = await Plan.find({ name: { $in: staticPlan } });
+            res.json(plans);
+        }
+        catch (error) {
+            res.status(500).send(error);
+        }
+    }
 }
